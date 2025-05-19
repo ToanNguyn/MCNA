@@ -1,0 +1,45 @@
+I. Preprocessing
+1. Data segregation
+ - The provided train set (churn-bigml-80.csv) and test set (churn-bigml-20.csv) are split into X_train, X_test, y_train, and y_test.
+ = This prevents the model from seeing the test data during training, avoiding data leakage and ensuring reliable evaluation.
+2. Categorical encoding
+ - Target variables y_train and y_test are converted from boolean to numerical: False to 0, True to 1.
+ - Categorical features 'International plan' and 'Voice mail plan' are mapped to 0 and 1, corresponding to 'No' and 'Yes', respectively.
+ - These mappings are fixed, so X_train and X_test are encoded independently.
+ - The 'State' feature has 51 unique values, making frequency encoding an optimal solution. It encodes each category by its relative frequency in the training data, avoiding issues like:
+ + The curse of dimensionality with one-hot encoding
+ + Data leakage from target encoding
+ + Unjustified assumptions of order in ordinal encoding.
+ - Frequencies are learned from X_train and applied to both X_train and X_test.
+3. Handling outliers
+ - Outlier handling is applied only for Logistic Regression, a linear model sensitive to extreme values, which can distort the decision boundary and coefficient estimates.
+ - Random Forest and LightGBM are tree-based models, which are robust to outliers.
+ - X_train and X_test are processed separately to prevent information leakage.
+4. Feature engineering
+   New domain-related features are created to improve model performance:
+ - Average call durations: avg_day_call_duration, avg_eve_call_duration, avg_night_call_duration, avg_intl_call_duration.
+ - Call ratios: day_ratio, eve_ratio, night_ratio, intl_ratio.
+ - Aggregated metrics: total_minutes, total_calls, intl_calls_ratio.
+ - Total charges: Total charge.
+5. Feature scaling
+ - Scaling is only applied for Logistic Regression, as it is a distance-sensitive model.
+ - Tree-based models are not affected by feature scales.
+ - A scaler is fit on X_train and then applied to both X_train and X_test, ensuring no leakage from test data.
+6. Resampling
+ - The dataset is imbalanced, with far fewer churned customers than non-churned ones. This can bias the model toward predicting the majority class.
+ - SMOTE (Synthetic Minority Oversampling Technique) is used to balance the classes by generating synthetic minority samples.
+ - SMOTE is applied only to X_train to avoid leaking information into the test set.
+ 
+II. Model 
+   Three models are trained and compared: Logistic Regression, Random Forest, and LightGBM.
+1. Training
+ - Models are trained using cross-validation on the SMOTE-resampled training set.
+ - Performance is evaluated using macro-averaged F1-score, which treats both classes equally.
+2. Optimization
+ - Hyperparameters are optimized using Optuna, maximizing the macro F1-score on cross-validation.
+3. Retraining and testing
+ - The best model is retrained on the full resampled X_train.
+ - Final performance is evaluated on X_test, using F1-score (class = 1), which balances precision and recall for churn prediction.
+4. Feature importance
+ - The top 10 most impactful features are identified to interpret the model. 
+
