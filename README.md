@@ -4,17 +4,17 @@ This repository contains my submission for the Data Analyst Intern test at **MCI
 
 ## Repository Structure
 
-- **Dataset/**  
+- **Dataset**  
   Contains the two dataset files provided for the test.
 
-- **Notebooks/**  
+- **Notebooks**  
   Includes four Jupyter notebooks:
   - `EDA.ipynb`: Exploratory Data Analysis.
   - `Logistic Regression.ipynb`: Logistic Regression model implementation.
   - `Random Forest.ipynb`: Random Forest model implementation.
   - `LightGBM.ipynb`: LightGBM model implementation.
 
-- **Sources/**  
+- **Sources**  
   - `Preprocessing.py`: Contains preprocessing functions used in the notebooks.
 
 - **Appendix.txt**  
